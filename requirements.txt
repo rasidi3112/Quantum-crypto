@@ -1,0 +1,13 @@
+# Quantum Crypto Education - Requirements
+
+# Core
+qiskit>=1.0.0
+qiskit-aer>=0.13.0
+
+# Visualization
+matplotlib>=3.7.0
+numpy>=1.24.0
+
+# Post-quantum crypto (optional)
+# pqcrypto>=0.1.3
+# liboqs-python>=0.9.0

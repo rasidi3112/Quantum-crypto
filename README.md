@@ -54,7 +54,7 @@ For production post-quantum cryptography, use established libraries such as:
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 Quantum-crypto/

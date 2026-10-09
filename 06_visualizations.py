@@ -24,15 +24,14 @@ def save_fig(name):
     print(f"[OK] Saved: visualizations/{name}.png")
 
 def classical_complexity(bits):
-    """GNFS complexity."""
-    n = 2 ** bits
+    """Illustrative GNFS asymptotic expression (not a practical cost estimate)."""
     ln_n = bits * np.log(2)
     ln_ln_n = np.log(ln_n)
     c = (64/9) ** (1/3)
     return np.exp(c * (ln_n ** (1/3)) * (ln_ln_n ** (2/3)))
 
 def quantum_complexity(bits):
-    """Shor's algorithm complexity."""
+    """Illustrative cubic proxy for Shor's polynomial asymptotic complexity."""
     return bits ** 3
 
 def plot_complexity_comparison():
@@ -45,68 +44,43 @@ def plot_complexity_comparison():
     classical = [classical_complexity(b) for b in bits]
     quantum = [quantum_complexity(b) for b in bits]
     
-    ax.semilogy(bits, classical, 'r-', linewidth=3, label='Classical (GNFS)', alpha=0.9)
-    ax.semilogy(bits, quantum, 'cyan', linewidth=3, label='Quantum (Shor)', alpha=0.9)
+    ax.semilogy(bits, classical, 'r-', linewidth=3, label='GNFS asymptotic expression', alpha=0.9)
+    ax.semilogy(bits, quantum, 'cyan', linewidth=3, label='Shor polynomial proxy', alpha=0.9)
     
-    # Fill danger zone
-    ax.fill_between(bits, quantum, classical, alpha=0.2, color='red')
-    
-    # Reference lines
-    year_ops = 1e9 * 3600 * 24 * 365  # ops per year at 1GHz
-    ax.axhline(y=year_ops, color='yellow', linestyle='--', alpha=0.5, linewidth=1)
-    ax.text(500, year_ops * 3, '1 Year @ 1 GHz', color='yellow', fontsize=10)
-    
-    ax.axhline(y=year_ops * 1e9, color='orange', linestyle='--', alpha=0.5, linewidth=1)
-    ax.text(500, year_ops * 1e9 * 3, '1 Billion Years', color='orange', fontsize=10)
-    
-    # Current standards
+    # Mark a familiar key size without implying a runtime estimate.
     ax.axvline(x=2048, color='white', linestyle=':', alpha=0.5)
-    ax.text(2100, 1e20, 'RSA-2048\n(Current Standard)', color='white', fontsize=10)
+    ax.text(2100, 1e20, 'RSA-2048', color='white', fontsize=10)
     
     ax.set_xlabel('Key Size (bits)', fontsize=14, color='white')
-    ax.set_ylabel('Operations Required (log scale)', fontsize=14, color='white')
-    ax.set_title('THE QUANTUM THREAT: Classical vs Quantum Complexity', 
+    ax.set_ylabel('Illustrative asymptotic expression (log scale)', fontsize=14, color='white')
+    ax.set_title('Factoring Complexity: Asymptotic Growth Shapes',
                  fontsize=16, fontweight='bold', color='white', pad=20)
     ax.legend(fontsize=12, loc='upper left')
     ax.grid(True, alpha=0.2)
     ax.set_xlim(64, 4096)
     ax.set_ylim(1e3, 1e100)
+    ax.text(0.02, 0.02, 'Constants, circuit costs, and hardware are omitted; curves are not wall-clock estimates.',
+            transform=ax.transAxes, fontsize=9, color='white', alpha=0.8)
     
     plt.tight_layout()
     save_fig('01_complexity_comparison')
 
 def plot_speedup():
-    """Plot 2: Quantum speedup factor."""
+    """Plot 2: Explain asymptotic classes without inventing a speedup ratio."""
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.patch.set_facecolor('#1a1a2e')
     ax.set_facecolor('#1a1a2e')
-    
-    bits = np.linspace(64, 4096, 100)
-    speedup = [classical_complexity(b) / quantum_complexity(b) for b in bits]
-    
-    # Create gradient effect
-    colors = plt.cm.plasma(np.linspace(0.2, 0.9, len(bits)))
-    for i in range(len(bits)-1):
-        ax.fill_between(bits[i:i+2], 1, speedup[i:i+2], color=colors[i], alpha=0.8)
-    
-    ax.semilogy(bits, speedup, 'white', linewidth=2)
-    
-    # Annotations
-    key_sizes = [512, 1024, 2048, 4096]
-    for ks in key_sizes:
-        sp = classical_complexity(ks) / quantum_complexity(ks)
-        ax.annotate(f'RSA-{ks}\n{sp:.0e}x faster', 
-                   xy=(ks, sp), xytext=(ks+200, sp*10),
-                   color='white', fontsize=10, ha='center',
-                   arrowprops=dict(arrowstyle='->', color='white', alpha=0.5))
-    
-    ax.set_xlabel('Key Size (bits)', fontsize=14, color='white')
-    ax.set_ylabel('Quantum Speedup Factor (log scale)', fontsize=14, color='white')
-    ax.set_title('QUANTUM SPEEDUP: How Much Faster is Shor\'s Algorithm?', 
-                 fontsize=16, fontweight='bold', color='white', pad=20)
-    ax.grid(True, alpha=0.2)
-    ax.set_xlim(64, 4096)
-    
+    ax.axis('off')
+    ax.text(0.5, 0.79, 'Asymptotic comparison', ha='center', va='center',
+            fontsize=23, color='white', fontweight='bold')
+    ax.text(0.08, 0.58, 'Classical factoring', fontsize=16, color='#e74c3c', fontweight='bold')
+    ax.text(0.08, 0.49, 'GNFS: sub-exponential in the modulus bit length', fontsize=13, color='white')
+    ax.text(0.08, 0.31, 'Quantum factoring', fontsize=16, color='cyan', fontweight='bold')
+    ax.text(0.08, 0.22, 'Shor: polynomial in the modulus bit length', fontsize=13, color='white')
+    ax.text(0.08, 0.08,
+            'These complexity classes do not give a practical speedup ratio or attack date.\n'
+            'A real attack also needs a sufficiently large, fault-tolerant quantum computer.',
+            fontsize=11, color='white', alpha=0.85)
     plt.tight_layout()
     save_fig('02_quantum_speedup')
 
@@ -116,34 +90,25 @@ def plot_timeline():
     fig.patch.set_facecolor('#1a1a2e')
     ax.set_facecolor('#1a1a2e')
     
-    # Timeline data
+    # Research, standards, and policy milestones; this is not a hardware forecast.
     events = [
-        (1994, 'Shor\'s Algorithm\nInvented', 'theory', 0.3),
-        (1999, 'RSA-512\nBroken (Classical)', 'broken', 0.5),
-        (2001, 'First Quantum\nFactoring (15=3×5)', 'milestone', 0.7),
-        (2009, 'RSA-768\nBroken (Classical)', 'broken', 0.5),
-        (2019, 'Google Quantum\nSupremacy', 'milestone', 0.7),
-        (2023, 'IBM 1000+\nQubits', 'milestone', 0.8),
-        (2024, 'NOW', 'now', 1.0),
-        (2030, 'RSA-1024\nVulnerable?', 'future', 0.6),
-        (2035, 'Q-DAY?\nRSA-2048 Broken', 'danger', 0.4),
+        (1994, 'Shor publishes\nfactoring algorithm', 'theory', 0.72),
+        (2001, 'First small-scale\nquantum factoring demo', 'milestone', 0.3),
+        (2024, 'NIST publishes\nFIPS 203–205', 'standard', 0.72),
+        (2025, 'SP 800-227 final;\nHQC selected', 'standard', 0.3),
+        (2035, 'NIST transition\npolicy target', 'policy', 0.3),
     ]
     
     colors = {
         'theory': '#3498db',
-        'broken': '#e74c3c',
         'milestone': '#2ecc71',
-        'now': '#f39c12',
-        'future': '#9b59b6',
-        'danger': '#e74c3c'
+        'standard': '#9b59b6',
+        'policy': '#f39c12'
     }
     
     for year, label, event_type, y_pos in events:
         color = colors[event_type]
         ax.scatter(year, y_pos, s=300, c=color, zorder=3, edgecolors='white', linewidths=2)
-        
-        if event_type == 'now':
-            ax.axvline(x=year, color='#f39c12', linestyle='-', linewidth=3, alpha=0.5)
         
         va = 'bottom' if y_pos > 0.5 else 'top'
         offset = 0.08 if y_pos > 0.5 else -0.08
@@ -151,17 +116,11 @@ def plot_timeline():
                fontsize=10, color='white', fontweight='bold')
     
     # Draw timeline
-    ax.plot([1990, 2040], [0.5, 0.5], 'white', linewidth=2, alpha=0.5)
-    
-    # Danger zone
-    ax.axvspan(2030, 2040, alpha=0.2, color='red')
-    ax.text(2035, 0.1, '[!] DANGER ZONE', ha='center', fontsize=14, 
-           color='red', fontweight='bold')
-    
-    ax.set_xlim(1990, 2042)
+    ax.plot([1990, 2037], [0.5, 0.5], 'white', linewidth=2, alpha=0.5)
+    ax.set_xlim(1990, 2038)
     ax.set_ylim(0, 1)
     ax.set_xlabel('Year', fontsize=14, color='white')
-    ax.set_title('⏰ QUANTUM THREAT TIMELINE: The Race Against Time', 
+    ax.set_title('PQC and Research Milestones (Not a Q-Day Forecast)',
                  fontsize=16, fontweight='bold', color='white', pad=20)
     
     ax.set_yticks([])
@@ -172,10 +131,9 @@ def plot_timeline():
     # Legend
     legend_elements = [
         mpatches.Patch(color='#3498db', label='Theory'),
-        mpatches.Patch(color='#e74c3c', label='Broken'),
-        mpatches.Patch(color='#2ecc71', label='Milestone'),
-        mpatches.Patch(color='#f39c12', label='Current'),
-        mpatches.Patch(color='#9b59b6', label='Predicted'),
+        mpatches.Patch(color='#2ecc71', label='Research milestone'),
+        mpatches.Patch(color='#9b59b6', label='Standardization'),
+        mpatches.Patch(color='#f39c12', label='Policy target'),
     ]
     ax.legend(handles=legend_elements, loc='upper left', fontsize=10)
     
@@ -183,102 +141,58 @@ def plot_timeline():
     save_fig('03_threat_timeline')
 
 def plot_algorithm_comparison():
-    """Plot 4: Algorithm security comparison."""
+    """Plot 4: Show NIST algorithm status without implying exact security bits."""
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.patch.set_facecolor('#1a1a2e')
     ax.set_facecolor('#1a1a2e')
-    
-    algorithms = ['RSA-2048', 'RSA-4096', 'ECC P-256', 'AES-128', 'AES-256', 
-                  'Kyber-768', 'Dilithium-3']
-    
-    classical_security = [112, 140, 128, 128, 256, 128, 128]  # bits
-    quantum_security = [0, 0, 0, 64, 128, 128, 128]  # bits (0 = broken)
-    
-    x = np.arange(len(algorithms))
-    width = 0.35
-    
-    bars1 = ax.bar(x - width/2, classical_security, width, label='Classical Security',
-                   color='#3498db', alpha=0.8, edgecolor='white')
-    bars2 = ax.bar(x + width/2, quantum_security, width, label='Quantum Security',
-                   color='#e74c3c', alpha=0.8, edgecolor='white')
-    
-    # Add value labels
-    for bar, val in zip(bars1, classical_security):
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 3,
-               f'{val}', ha='center', va='bottom', color='white', fontsize=10)
-    
-    for bar, val in zip(bars2, quantum_security):
-        label = f'{val}' if val > 0 else 'X'
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 3,
-               label, ha='center', va='bottom', color='white', fontsize=10)
-    
-    # Security threshold
-    ax.axhline(y=128, color='#2ecc71', linestyle='--', linewidth=2, alpha=0.7)
-    ax.text(6.5, 133, '128-bit security threshold', color='#2ecc71', fontsize=10)
-    
-    ax.set_xlabel('Algorithm', fontsize=14, color='white')
-    ax.set_ylabel('Security Level (bits)', fontsize=14, color='white')
-    ax.set_title('ALGORITHM SECURITY: Classical vs Quantum Era', 
+    ax.axis('off')
+    ax.set_title('Algorithm Families and NIST Standardization Status',
                  fontsize=16, fontweight='bold', color='white', pad=20)
-    ax.set_xticks(x)
-    ax.set_xticklabels(algorithms, rotation=45, ha='right')
-    ax.legend(fontsize=12)
-    ax.set_ylim(0, 280)
-    
-    # Highlight post-quantum algorithms
-    ax.axvspan(4.5, 6.5, alpha=0.1, color='green')
-    ax.text(5.5, 260, '← Post-Quantum Safe →', ha='center', 
-           color='#2ecc71', fontsize=12, fontweight='bold')
-    
+
+    rows = [
+        ('Quantum-vulnerable public key', 'RSA, Diffie–Hellman, ECDSA',
+         'Shor threatens these in principle on a sufficiently capable fault-tolerant computer.', '#e74c3c'),
+        ('Final NIST PQC standards', 'ML-KEM (FIPS 203) · ML-DSA (FIPS 204) · SLH-DSA (FIPS 205)',
+         'Published in 2024; designed to resist known classical and quantum attacks.', '#2ecc71'),
+        ('Selected; standards in development', 'FN-DSA / Falcon (FIPS 206) · HQC (FIPS 207)',
+         'Selected by NIST; selection is not the same as a final standard.', '#9b59b6'),
+    ]
+    for i, (heading, algorithms, note, color) in enumerate(rows):
+        y = 0.77 - i * 0.27
+        ax.add_patch(mpatches.FancyBboxPatch(
+            (0.04, y - 0.16), 0.92, 0.22,
+            boxstyle='round,pad=0.012', facecolor=color, alpha=0.18,
+            edgecolor=color, linewidth=1.5, transform=ax.transAxes))
+        ax.text(0.07, y, heading, transform=ax.transAxes, color=color,
+                fontsize=12, fontweight='bold', va='center')
+        ax.text(0.07, y - 0.055, algorithms, transform=ax.transAxes,
+                color='white', fontsize=10, va='center')
+        ax.text(0.07, y - 0.115, note, transform=ax.transAxes,
+                color='white', fontsize=9, alpha=0.85, va='center')
+
     plt.tight_layout()
     save_fig('04_algorithm_comparison')
 
 def plot_qubit_progress():
-    """Plot 5: Qubit count progress over time."""
+    """Plot 5: Show one model-dependent RSA-2048 resource estimate."""
     fig, ax = plt.subplots(figsize=(12, 8))
     fig.patch.set_facecolor('#1a1a2e')
     ax.set_facecolor('#1a1a2e')
     
-    # Historical data (approximate)
-    years = [2000, 2005, 2010, 2015, 2017, 2019, 2020, 2021, 2022, 2023, 2024]
-    qubits = [5, 12, 14, 17, 50, 53, 65, 127, 433, 1121, 1200]
-    
-    # Projections
-    future_years = [2025, 2027, 2030, 2035]
-    projected_qubits = [2000, 5000, 10000, 100000]
-    
-    # Plot historical
-    ax.semilogy(years, qubits, 'o-', color='cyan', linewidth=3, markersize=10,
-               label='Achieved')
-    
-    # Plot projections
-    ax.semilogy(future_years, projected_qubits, 's--', color='yellow', 
-               linewidth=2, markersize=10, alpha=0.7, label='Projected')
-    
-    # RSA-2048 threshold (approx 4000 logical qubits needed)
-    ax.axhline(y=4000, color='red', linestyle='--', linewidth=2)
-    ax.fill_between([2024, 2040], 4000, 1e6, alpha=0.1, color='red')
-    ax.text(2035, 5000, 'RSA-2048 Breakable\n(~4000 logical qubits)', 
-           color='red', fontsize=11, ha='center')
-    
-    # Annotate key milestones
-    annotations = [
-        (2019, 53, 'Google\nSupremacy'),
-        (2023, 1121, 'IBM\nCondor'),
-    ]
-    for year, qubit, label in annotations:
-        ax.annotate(label, xy=(year, qubit), xytext=(year-2, qubit*3),
-                   color='white', fontsize=9, ha='center',
-                   arrowprops=dict(arrowstyle='->', color='white', alpha=0.5))
-    
-    ax.set_xlabel('Year', fontsize=14, color='white')
-    ax.set_ylabel('Number of Qubits (log scale)', fontsize=14, color='white')
-    ax.set_title('QUBIT PROGRESS: Racing Toward Cryptographic Relevance', 
+    estimate_millions = [20]
+    ax.barh(['Gidney & Ekerå (2021)'], estimate_millions, color='cyan', alpha=0.8)
+    ax.text(10, 0, '20 million physical qubits',
+            va='center', ha='center', color='#1a1a2e', fontsize=11, fontweight='bold')
+    ax.set_xlabel('Estimated physical qubits (millions)', fontsize=13, color='white')
+    ax.set_title('One Model-Dependent Estimate for RSA-2048',
                  fontsize=16, fontweight='bold', color='white', pad=20)
-    ax.legend(fontsize=12)
-    ax.grid(True, alpha=0.2)
-    ax.set_xlim(1998, 2038)
-    ax.set_ylim(1, 1e6)
+    ax.text(0.02, 0.03,
+            'The paper modeled an 8-hour runtime. This is not a current capability, universal threshold, or forecast.\n'
+            'Logical and physical qubit counts are different quantities.',
+            transform=ax.transAxes, fontsize=10, color='white', alpha=0.85)
+    ax.set_xlim(0, 24)
+    ax.set_ylim(-0.7, 0.7)
+    ax.grid(axis='x', alpha=0.2)
     
     plt.tight_layout()
     save_fig('05_qubit_progress')

@@ -366,11 +366,11 @@ def demo_full_factorization():
     • Quantum (Shor):   polynomial O(n³) complexity → tractable
     
     IMPORTANT CAVEAT:
-    Current quantum computers (~1000 physical qubits) are NOT sufficient.
-    Estimates suggest ~4000 logical qubits with error correction needed,
-    which translates to millions of physical qubits with current technology.
-    
-    This is why quantum computing is a FUTURE THREAT to RSA.
+    Current quantum computers cannot factor cryptographic-size RSA keys.
+    Resource estimates depend on circuit, hardware, and error-correction
+    assumptions. For example, Gidney and Ekerå (2021) estimated about
+    20 million physical qubits for an 8-hour RSA-2048 computation under their
+    model. This is not a universal qubit threshold or a timeline prediction.
     """)
 
 

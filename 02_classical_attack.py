@@ -169,10 +169,10 @@ def demo_classical_attack():
 
 
 def estimate_rsa_crack_time():
-    """Estimate time to crack real RSA keys."""
+    """Summarize historical factoring results without guessing attack times."""
     
     print("\n" + "=" * 70)
-    print("ESTIMATED TIME TO CRACK RSA (Classical Computer)")
+    print("CLASSICAL FACTORIZATION: QUALITATIVE STATUS")
     print("=" * 70)
     
     # Assumptions based on current technology
@@ -180,36 +180,30 @@ def estimate_rsa_crack_time():
     # Complexity: exp((64/9)^(1/3) * (ln n)^(1/3) * (ln ln n)^(2/3))
     
     estimates = [
-        ("RSA-512", 512, "< 1 day", "BROKEN (1999)"),
-        ("RSA-768", 768, "~2 years", "BROKEN (2009)"),
-        ("RSA-1024", 1024, "~1000 years", "Theoretically vulnerable"),
-        ("RSA-2048", 2048, "~10^15 years", "Current standard"),
-        ("RSA-4096", 4096, "~10^30 years", "High security"),
+        ("RSA-512", 512, "Factored in 1999", "Historical result"),
+        ("RSA-768", 768, "Factored in 2009", "Historical result"),
+        ("RSA-1024", 1024, "No fixed estimate", "Inadequate for new use"),
+        ("RSA-2048", 2048, "No fixed estimate", "Classically infeasible today"),
+        ("RSA-4096", 4096, "No fixed estimate", "Classically infeasible today"),
     ]
     
-    print(f"\n{'Key Size':<12} {'Bits':>6} {'Est. Time (Classical)':>25} {'Status':>25}")
+    print(f"\n{'Key Size':<12} {'Bits':>6} {'Historical result / estimate':>28} {'Status':>22}")
     print("-" * 70)
     for name, bits, time_est, status in estimates:
-        print(f"{name:<12} {bits:>6} {time_est:>25} {status:>25}")
+        print(f"{name:<12} {bits:>6} {time_est:>28} {status:>22}")
     
     print("""
     
-    [!] IMPORTANT: 
-    
-    The estimates above are for the BEST available CLASSICAL COMPUTERS!
-    
-    With QUANTUM COMPUTER (Shor's Algorithm):
-    ┌─────────────────────────────────────────────────────────────────┐
-    │  Shor's Algorithm provides EXPONENTIAL SPEEDUP                  │
-    │  Complexity: O(n³) vs O(exp(n^(1/3))) for GNFS                  │
-    │                                                                 │
-    │  HOWEVER currently:                                             │
-    │  • Requires ~4000 LOGICAL qubits with error correction          │
-    │  • This equals MILLIONS of physical qubits with current tech    │
-    │  • IBM/Google currently have ~1000 physical qubits              │
-    │                                                                 │
-    │  Prediction: 2030-2040 quantum computers MAY threaten RSA       │
-    └─────────────────────────────────────────────────────────────────┘
+    These are qualitative comparisons, not wall-clock estimates. Real
+    factoring cost depends on implementation, hardware, and the number's
+    structure. RSA-1024 is no longer an appropriate size for new deployments.
+
+    Shor's algorithm has polynomial asymptotic complexity in the modulus bit
+    length, but that does not imply a practical attack today. Resource
+    estimates for RSA-2048 are model-dependent; one published 2021 estimate
+    uses about 20 million physical qubits for an 8-hour computation. This is
+    an estimate for a particular architecture, not a universal threshold or
+    a forecast of when such a computer will exist.
     """)
 
 
@@ -229,33 +223,30 @@ def complexity_comparison():
     │  Trial Division               │  O(√n) = O(2^(k/2))   │  Classical │
     │  Pollard's Rho                │  O(n^(1/4))           │  Classical │
     │  Quadratic Sieve              │  O(exp(√(k·ln(k))))   │  Classical │
-    │  General Number Field Sieve   │  O(exp(k^(1/3)))      │  Classical │
+    │  General Number Field Sieve   │  Sub-exponential     │  Classical │
     ├────────────────────────────────────────────────────────────────────┤
     │  SHOR'S ALGORITHM             │  O(k³) = O((log n)³)  │  QUANTUM   │
     └────────────────────────────────────────────────────────────────────┘
     
     KEY DIFFERENCE:
     
-    • Classical: EXPONENTIAL in bit size (k)
-      - Time increases DRASTICALLY with key size
+    • Classical GNFS: SUB-EXPONENTIAL in bit size (k)
+      - Cost still grows rapidly with key size
       - RSA-2048 is practically impossible to break
     
     • Quantum (Shor): POLYNOMIAL in bit size (k)
-      - Time increases SLOWLY with key size
-      - RSA-2048 can be broken in reasonable time!
+      - Asymptotic growth is polynomial in key size
+      - Practical cost still depends on a large fault-tolerant machine
     
     Example for RSA-2048 (k = 2048):
-    
-    • Classical (GNFS): ~2^100 operations ≈ 10^30 operations
-      → Takes trillions of years
-    
-    • Quantum (Shor): ~2048³ ≈ 8.6 × 10^9 operations
-      → Tractable with large enough quantum computer
-      → HOWEVER requires ~4000 logical qubits + error correction (not yet available)
-    
-    CONCLUSION:
-    Shor's Algorithm provides EXPONENTIAL SPEEDUP!
-    This threat is REAL but the timeline is still debated (est. 2030-2040).
+
+    • Classical GNFS has sub-exponential asymptotic complexity.
+    • Shor's algorithm has polynomial asymptotic complexity in k.
+
+    These expressions are not direct operation counts and cannot be converted
+    into comparable runtimes by substituting k. A practical quantum attack
+    would require a large fault-tolerant machine; there is no reliable date
+    for when one might be built.
     """)
 
 

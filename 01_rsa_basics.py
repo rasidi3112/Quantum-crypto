@@ -206,15 +206,15 @@ def explain_rsa_security():
     │  But finding p and q from n is very HARD                │
     └─────────────────────────────────────────────────────────┘
     
-    For RSA-2048 (modern standard):
-    - n has 2048 bits (617 decimal digits!)
-    - Classical computers need TRILLIONS OF YEARS to factor
-    
-    [!] BUT with QUANTUM COMPUTER using SHOR'S ALGORITHM:
-    - Factorization can be done in POLYNOMIAL time
-    - RSA-2048 can be broken in HOURS/DAYS
-    
-    This is called the "QUANTUM THREAT"!
+    For RSA-2048:
+    - n has 2048 bits (617 decimal digits)
+    - Factoring it with the best known classical methods is not practical
+      with current computing resources.
+
+    A sufficiently large, fault-tolerant quantum computer running Shor's
+    algorithm could factor RSA moduli in polynomial time. No such machine
+    exists today, and published resource estimates depend on hardware and
+    error-correction assumptions; this demo does not estimate a break time.
     """)
 
 
@@ -238,10 +238,10 @@ if __name__ == "__main__":
     
     ANYONE can factor {primes[0] * primes[1]} = {primes[0]} × {primes[1]}
     
-    Real RSA uses 1024+ bit primes:
-    - n ≈ 10^308 (308 digits!)
-    - Cannot be factored by classical computers
-    - BUT quantum computers with Shor's Algorithm CAN!
+    Real deployments use much larger moduli (commonly RSA-2048 or larger):
+    - Factoring them is infeasible with currently known classical resources
+    - A sufficiently capable, fault-tolerant quantum computer could change
+      that; current quantum devices cannot factor cryptographic-size RSA keys
     
     --> Continue to 02_classical_attack.py to see classical attacks
     --> Continue to 03_shors_algorithm.py for quantum attacks

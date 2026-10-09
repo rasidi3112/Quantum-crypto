@@ -7,11 +7,11 @@ IMPORTANT DISCLAIMER FOR RESEARCHERS:
 - NOT cryptographically secure - do not use in production
 - Real Kyber uses polynomial rings with NTT, not simple matrices
 - Real SPHINCS+ uses WOTS+, FORS, and Merkle trees
-- For production: use liboqs, PQClean, or pqcrypto libraries
+- PQClean is retired; liboqs is a research and prototyping project, not a production recommendation
 
 References:
-- Kyber: Bos et al. "CRYSTALS-Kyber" (pq-crystals.org)
-- SPHINCS+: Bernstein et al. "SPHINCS+" (sphincs.org)
+- ML-KEM (based on CRYSTALS-Kyber): NIST FIPS 203
+- SLH-DSA (based on SPHINCS+): NIST FIPS 205
 - LWE: Regev, O. (2005) "On lattices, learning with errors..."
 """
 
@@ -30,7 +30,7 @@ class LWEDemo:
     """
     Demonstration of the Learning With Errors problem.
     
-    LWE is the foundation of CRYSTALS-Kyber (NIST standard).
+    Module-LWE underlies ML-KEM (FIPS 203), based on CRYSTALS-Kyber.
     
     Problem: Given A and b = A·s + e, it is hard to find s
     where e is a small error (noise).
@@ -136,9 +136,9 @@ class LWEDemo:
         print("""
     LWE is a mathematical problem that is:
     ✓ HARD for classical computers
-    ✓ HARD for quantum computers (as far as we know)
+    ✓ No efficient quantum attack is currently known; this remains a security assumption
     
-    This is the foundation of CRYSTALS-Kyber!
+    This is a simplified introduction to lattice ideas used in ML-KEM.
         """)
         
         # Generate keys
@@ -171,7 +171,7 @@ class KyberDemo:
     """
     Simplified demonstration of CRYSTALS-Kyber concepts.
     
-    Kyber is NIST's chosen standard for key encapsulation!
+    ML-KEM (FIPS 203), based on CRYSTALS-Kyber, is NIST's key-encapsulation standard.
     Based on Module-LWE (MLWE).
     """
     
@@ -296,10 +296,10 @@ class KyberDemo:
         print("CRYSTALS-KYBER DEMONSTRATION (Simplified)")
         print("=" * 60)
         print("""
-    CRYSTALS-Kyber is the NIST standard for:
+    ML-KEM (based on CRYSTALS-Kyber) is the NIST standard for:
     • Key Encapsulation Mechanism (KEM)
     • Replacing RSA/ECDH for key exchange
-    • Safe against quantum computers!
+    • Designed to resist known quantum attacks; security assumptions can change
     
     Security based on Module-LWE problem.
         """)
@@ -441,7 +441,7 @@ class SPHINCSDemo:
         print("SPHINCS+ DEMONSTRATION (Hash-Based Signatures)")
         print("=" * 60)
         print("""
-    SPHINCS+ is the NIST standard for digital signatures:
+    SLH-DSA (based on SPHINCS+) is specified by NIST FIPS 205:
     • Based ONLY on hash functions
     • Most conservative - security best understood
     • Larger signature size, but very secure
@@ -453,7 +453,7 @@ class SPHINCSDemo:
         secret_key, public_key = self.keygen()
         
         # Sign message
-        message = b"This is a quantum-safe signed message!"
+        message = b"Toy message for a simplified signature demonstration"
         signature = self.sign(secret_key, message)
         
         # Verify signature
@@ -516,13 +516,11 @@ def benchmark_algorithms():
     
     NOTE:
     • This is a SIMPLIFIED implementation for education
-    • Real Kyber/SPHINCS+ is more complex and optimized
+    • Real ML-KEM/SLH-DSA implementations are standardized, reviewed, and substantially more complex
     • Actual performance is much better with C/Rust libraries
     
-    Production Libraries:
-    • liboqs (Open Quantum Safe)
-    • PQClean
-    • pqcrypto
+    These demonstrations are not production implementations. Choose a maintained
+    cryptographic provider that fits the deployment and compliance requirements.
     """)
 
 

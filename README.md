@@ -17,10 +17,7 @@ The implementations provided here are:
 - **Not cryptographically secure** — do not use for any real-world applications
 - **Simulations or toy examples** — the Shor's algorithm demonstration uses classical simulation or simplified quantum circuits that do not represent actual cryptanalytic attacks
 
-For production post-quantum cryptography, use established libraries such as:
-- [liboqs (Open Quantum Safe)](https://openquantumsafe.org/)
-- [PQClean](https://github.com/PQClean/PQClean)
-- [pqcrypto](https://github.com/pqcrypto)
+For production systems, use an actively maintained cryptographic provider that implements the applicable NIST standards and fits your deployment and compliance requirements. This project does not endorse a production implementation. The Open Quantum Safe project describes `liboqs` as research and prototyping software, and the PQClean repository is retired; see the [liboqs security policy](https://openquantumsafe.org/liboqs/security.html) and [PQClean project status](https://github.com/PQClean/PQClean).
 
 ---
 
@@ -29,16 +26,16 @@ For production post-quantum cryptography, use established libraries such as:
 ### Classical vs Quantum Computational Complexity
 ![Complexity Comparison](visualizations/01_complexity_comparison.png)
 
-### Quantum Speedup Factor (Theoretical)
+### Asymptotic Complexity Classes (Conceptual)
 ![Quantum Speedup](visualizations/02_quantum_speedup.png)
 
-### Threat Timeline (Speculative Estimates)
+### Migration Milestones (Not a Hardware Forecast)
 ![Threat Timeline](visualizations/03_threat_timeline.png)
 
-### Algorithm Security Comparison
+### Algorithm Families and Standardization Status
 ![Algorithm Security](visualizations/04_algorithm_comparison.png)
 
-### Qubit Progress (Historical)
+### RSA-2048 Resource Estimate (Illustrative)
 ![Qubit Progress](visualizations/05_qubit_progress.png)
 
 ---
@@ -48,7 +45,7 @@ For production post-quantum cryptography, use established libraries such as:
 1. **RSA Fundamentals** — The mathematical structure securing much of today's internet
 2. **Classical Security of RSA** — Why integer factorization is believed to be computationally hard for classical computers
 3. **Shor's Algorithm** — The quantum algorithm that, in principle, efficiently solves integer factorization
-4. **The Quantum Threat Timeline** — Scenario-based projections and their significant uncertainties
+4. **Migration Milestones** — NIST policy dates and why they are not hardware forecasts
 5. **Post-Quantum Solutions** — NIST-standardized algorithms designed to resist both classical and quantum attacks
 6. **Lattice-Based Cryptography** — Learning With Errors (LWE) and its role in modern PQC
 
@@ -142,7 +139,7 @@ python 07_advanced_post_quantum.py  # Simplified PQC concept demonstrations
 | Algorithm | Classical Attack Complexity | Quantum Attack Complexity | Current Status |
 |-----------|----------------------------|---------------------------|----------------|
 | **RSA-2048** | Sub-exponential (GNFS)¹ | Polynomial time (Shor's)² | Theoretically vulnerable to future quantum computers |
-| **AES-256** | ~2²⁵⁶ operations | ~2¹²⁸ operations (Grover's)³ | Currently believed secure with sufficient margin |
+| **AES-256** | ~2²⁵⁶ classical key guesses | ~2¹²⁸ quantum queries (idealized Grover model)³ | Currently believed secure with sufficient margin |
 | **ML-KEM (Kyber)** | Believed secure⁴ | Believed secure⁴ | NIST FIPS 203 — Standardized |
 | **ML-DSA (Dilithium)** | Believed secure⁴ | Believed secure⁴ | NIST FIPS 204 — Standardized |
 | **SLH-DSA (SPHINCS+)** | Believed secure⁴ | Believed secure⁴ | NIST FIPS 205 — Standardized |
@@ -153,7 +150,7 @@ python 07_advanced_post_quantum.py  # Simplified PQC concept demonstrations
 
 ² *Shor's algorithm runs in polynomial time with respect to the input size. The precise complexity depends on implementation details including the arithmetic circuits used for modular exponentiation and the fault-tolerance overhead. Often cited as O(n²log(n)log(log(n))) or O(n³) depending on assumptions about circuit depth and gate counts. These figures should be understood as asymptotic and implementation-dependent.*
 
-³ *Grover's algorithm provides a quadratic speedup for unstructured search, reducing brute-force key search from 2²⁵⁶ to approximately 2¹²⁸ operations for AES-256. This margin is currently believed sufficient for long-term security.*
+³ *In the idealized quantum query model, Grover's algorithm reduces an exhaustive AES-256 key search from about 2²⁵⁶ to about 2¹²⁸ queries. This is a complexity statement, not a complete security guarantee for a real implementation.*
 
 ⁴ *"Believed secure" indicates that no efficient classical or quantum algorithm is currently known to break these schemes. Security is based on the presumed hardness of underlying mathematical problems (e.g., Module-LWE, hash function properties) under current cryptanalytic knowledge. This is not a mathematical proof of security.*
 
@@ -174,52 +171,58 @@ Shor's algorithm (1994) is a **quantum algorithm** that can factor integers in p
 | **RSA-2048 status** | **Far beyond current quantum capabilities** — no existing quantum computer can factor numbers of cryptographic relevance |
 | **Toy examples** | Factoring small numbers (e.g., 15, 21) for educational illustration only |
 
-### Qubit Requirements: A Nuanced View
+### Quantum Resource Estimates: A Nuanced View
 
 Estimates for the quantum resources required to break RSA-2048 vary significantly based on architectural assumptions:
 
-| Source | Logical Qubits | Physical Qubits | Key Assumptions |
-|--------|---------------|-----------------|-----------------|
-| Gidney & Ekerå (2021)¹ | ~20 million physical qubits | ~20 million | Optimized circuits, 8-hour runtime, surface code error correction with ~0.1% gate error rates |
-| Earlier estimates | ~4,000 logical qubits | Millions (dependent on error correction overhead) | Varies by error model and code distance |
+| Source | Estimated physical qubits | Target runtime | Key assumptions |
+|--------|---------------------------|---------------|-----------------|
+| Gidney & Ekerå (2021)¹ | About 20 million | 8 hours | Their circuit, hardware, and error-correction model |
+| Other estimates | Varies | Varies | Different circuits and error models produce different resource requirements |
 
 **Key Points:**
 - **Logical vs. Physical Qubits**: Logical qubits are error-corrected abstractions; each requires many physical qubits (the ratio depends on error rates and error-correction codes)
 - **These estimates are model-dependent**: Actual requirements depend on qubit coherence times, gate fidelities, connectivity, and the specific error-correction scheme employed
-- **No single number is universal**: Different assumptions yield different estimates
+- **No single number is a universal threshold**: These are resource estimates, not forecasts of when a capable machine will exist
 
 ¹ Gidney, C., & Ekerå, M. (2021). "How to factor 2048 bit RSA integers in 8 hours using 20 million noisy qubits." *Quantum*, 5, 433.
 
 ---
 
-## Quantum Threat Timeline: Uncertainties and Caveats
+## Migration Milestones and Uncertainty
 
-### Scenario-Based Projections (Speculative)
+There is no reliable date for a cryptographically relevant quantum computer. Treat dates below as standards and migration milestones, not predictions about quantum hardware.
 
-| Scenario | Timeframe | Description |
-|----------|-----------|-------------|
-| Conservative | 2040+ | Assumes slow progress in error correction and qubit coherence |
-| Moderate | 2035–2040 | Assumes continued progress consistent with recent trends |
-| Optimistic | 2030–2035 | Assumes major breakthroughs in hardware and error correction |
+| Date | Milestone |
+|------|-----------|
+| 2024 | NIST published the first three final PQC standards: FIPS 203, 204, and 205 |
+| 2025 | NIST published final SP 800-227 guidance for using key-encapsulation mechanisms and selected HQC for standardization |
+| 2035 | NIST's transition guidance targets removing quantum-vulnerable public-key algorithms from its standards; high-risk systems are expected to transition earlier |
 
-**⚠️ Critical Notes:**
+NIST IR 8547 describes the transition schedule, but remains an initial public draft. Its dates are policy guidance, not a forecast of when a quantum computer will be capable of breaking RSA. See the [NIST PQC transition guidance](https://csrc.nist.gov/pubs/ir/8547/ipd) and [NIST's current PQC overview](https://csrc.nist.gov/projects/post-quantum-cryptography).
 
-- **All timelines are speculative** and reflect informed estimates, not predictions
-- **Expert opinions vary widely** — some researchers believe cryptographically relevant quantum computers (CRQCs) are decades away, while others suggest shorter timescales under optimistic scenarios
-- **NIST has set 2035** as a transition milestone for federal systems to migrate away from quantum-vulnerable algorithms (this is a policy deadline, not a threat prediction)
-- **"Harvest Now, Decrypt Later" (HNDL)**: This is a well-founded concern — adversaries may collect encrypted data today with the intent to decrypt it once quantum capabilities mature. This makes early migration strategically important for long-lived secrets.
+**"Harvest Now, Decrypt Later" (HNDL)** remains relevant for information that must stay confidential for many years: an adversary could record encrypted data now and attempt to decrypt it if future capabilities become available.
 
 ---
 
 ##  Post-Quantum Cryptography (NIST Standards)
 
-The following algorithms have been standardized by NIST as part of the Post-Quantum Cryptography Standardization Process:
+The following three algorithms are final NIST standards:
 
 | NIST Standard | Algorithm Family | Use Case | Underlying Problem |
 |---------------|-----------------|----------|-------------------|
 | **FIPS 203 (ML-KEM)** | CRYSTALS-Kyber | Key Encapsulation Mechanism (KEM) | Module Learning With Errors (MLWE) |
 | **FIPS 204 (ML-DSA)** | CRYSTALS-Dilithium | Digital Signatures | Module Learning With Errors (MLWE) / Module SIS |
 | **FIPS 205 (SLH-DSA)** | SPHINCS+ | Digital Signatures | Hash function security (stateless hash-based) |
+
+NIST has also selected two additional algorithms for standardization. As of October 2026, both standards are still in development; selection does not mean a final standard is available:
+
+| Algorithm | Intended standard | Use | Status |
+|-----------|------------------|-----|--------|
+| FN-DSA (based on Falcon) | FIPS 206 | Digital signatures | Selected; standard in development |
+| HQC | FIPS 207 | Key encapsulation | Selected in March 2025; standard in development |
+
+NIST's [SP 800-227](https://csrc.nist.gov/pubs/sp/800/227/final), published in September 2025, provides guidance for implementing and using KEMs, including ML-KEM.
 
 **Security Basis:**
 
@@ -264,9 +267,9 @@ As with all cryptography, security assumptions may evolve as new attacks are dis
 
 ### Tools and Libraries
 
-- [Qiskit](https://qiskit.org/) — IBM's open-source SDK for quantum computing
-- [Open Quantum Safe (liboqs)](https://openquantumsafe.org/) — Production PQC implementations
-- [PQClean](https://github.com/PQClean/PQClean) — Clean, portable PQC implementations
+- [Qiskit documentation](https://quantum.cloud.ibm.com/docs/en/guides/install-qiskit) — IBM's open-source SDK for quantum computing
+- [Open Quantum Safe (liboqs)](https://openquantumsafe.org/) — Research and prototyping resources
+- [NIST PQC migration project](https://www.nccoe.nist.gov/applied-cryptography/migration-to-pqc) — Migration planning resources
 
 ---
 
@@ -280,7 +283,7 @@ MIT License — For educational use.
 
 | Key Point | Status |
 |-----------|--------|
-| RSA-2048 is currently secure | ✅ Yes — no existing quantum computer can break it |
+| RSA-2048 factoring status | ✅ No known classical or current quantum computer can factor it |
 | Quantum computers will eventually threaten RSA | ⚠️ Theoretically well-founded, timeline uncertain |
 | Post-quantum algorithms are available | ✅ Yes — NIST has standardized ML-KEM, ML-DSA, SLH-DSA |
 | Migration should begin now | ⚠️ Recommended for long-term secrets due to HNDL risk |
@@ -288,8 +291,6 @@ MIT License — For educational use.
 
 ---
 
-**Remember**: This project demonstrates *theoretical concepts*. The quantum threat to cryptography is **real but not imminent**. Current quantum computers are not capable of breaking cryptographically relevant key sizes. However, the strategic importance of early preparation — particularly for data with long-term secrecy requirements — is widely recognized by the cryptographic community.
+**Remember**: This project demonstrates *theoretical concepts*. Current quantum computers cannot break cryptographically relevant RSA keys, and the timeline for a capable fault-tolerant machine is unknown. Early migration planning matters especially for data with long-term secrecy requirements.
 
-> *"It is difficult to make predictions, especially about the future."* — attributed to various sources
-
-Begin exploring post-quantum cryptography today, but approach timeline claims with appropriate scientific skepticism.
+Begin exploring post-quantum cryptography today, and distinguish migration deadlines from hardware forecasts.

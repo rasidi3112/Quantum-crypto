@@ -1,15 +1,3 @@
-"""
-=============================================================================
-CLASSICAL ATTACK ON RSA (Brute Force Factorization)
-=============================================================================
-Demonstration of classical attack on RSA using factorization methods.
-This shows why RSA is secure against classical computers - it takes
-a VERY long time to factor large numbers.
-
-Author: Quantum Crypto Education
-=============================================================================
-"""
-
 import time
 import math
 from typing import Tuple, Optional
@@ -17,18 +5,7 @@ import random
 
 
 def trial_division(n: int, verbose: bool = True) -> Tuple[Optional[int], Optional[int], float, int]:
-    """
-    Factorization using trial division (brute force).
-    
-    This is the simplest method - try all numbers
-    from 2 to √n.
-    
-    Returns:
-        - p: first factor (or None if prime)
-        - q: second factor (or None if prime)
-        - time_taken: time required
-        - attempts: number of attempts
-    """
+   
     if verbose:
         print(f"\nTrying to factorize n = {n}")
         print("-" * 50)
@@ -36,13 +13,13 @@ def trial_division(n: int, verbose: bool = True) -> Tuple[Optional[int], Optiona
     start_time = time.time()
     attempts = 0
     
-    # Check for factor 2
+  
     attempts += 1
     if n % 2 == 0:
         time_taken = time.time() - start_time
         return 2, n // 2, time_taken, attempts
     
-    # Check odd numbers from 3 to √n
+    
     i = 3
     sqrt_n = int(math.sqrt(n)) + 1
     
@@ -57,7 +34,7 @@ def trial_division(n: int, verbose: bool = True) -> Tuple[Optional[int], Optiona
             return i, n // i, time_taken, attempts
         i += 2
         
-        # Progress indicator for large numbers
+        
         if verbose and attempts % 100000 == 0:
             print(f"   ... checked {attempts:,} candidates ...")
     
@@ -70,14 +47,7 @@ def trial_division(n: int, verbose: bool = True) -> Tuple[Optional[int], Optiona
 
 
 def pollard_rho(n: int, verbose: bool = True) -> Tuple[Optional[int], Optional[int], float, int]:
-    """
-    Pollard's Rho algorithm - more efficient than trial division.
-    
-    Uses cycle detection (Floyd's algorithm) to
-    find factors faster.
-    
-    Still EXPONENTIAL in complexity!
-    """
+   
     if verbose:
         print(f"\nPollard's Rho on n = {n}")
         print("-" * 50)
@@ -100,7 +70,7 @@ def pollard_rho(n: int, verbose: bool = True) -> Tuple[Optional[int], Optional[i
         y = (y * y + c) % n
         d = math.gcd(abs(x - y), n)
         
-        if attempts > n:  # Safety limit
+        if attempts > n:  
             break
     
     time_taken = time.time() - start_time
@@ -118,18 +88,18 @@ def pollard_rho(n: int, verbose: bool = True) -> Tuple[Optional[int], Optional[i
 
 
 def demo_classical_attack():
-    """Demo classical attack on various RSA sizes."""
+   
     
     print("\n" + "=" * 70)
     print("CLASSICAL ATTACK DEMONSTRATION")
     print("=" * 70)
     
-    # Test cases with different sizes
+   
     test_cases = [
-        ("Tiny (8-bit)", 143),           # 11 × 13
-        ("Small (16-bit)", 10403),        # 101 × 103
-        ("Medium (24-bit)", 1018081),     # 1009 × 1009
-        ("Larger (32-bit)", 2147483659),  # 46337 × 46351
+        ("Tiny (8-bit)", 143),           
+        ("Small (16-bit)", 10403),        
+        ("Medium (24-bit)", 1018081),     
+        ("Larger (32-bit)", 2147483659), 
     ]
     
     results = []
@@ -140,10 +110,10 @@ def demo_classical_attack():
         print(f"   n = {n} ({n.bit_length()} bits)")
         print("=" * 60)
         
-        # Trial Division
+        
         p, q, time_td, attempts_td = trial_division(n)
         
-        # Pollard's Rho
+        
         p2, q2, time_pr, attempts_pr = pollard_rho(n)
         
         results.append({
@@ -156,7 +126,7 @@ def demo_classical_attack():
             'pr_attempts': attempts_pr
         })
     
-    # Summary
+    
     print("\n" + "=" * 70)
     print("RESULTS SUMMARY")
     print("=" * 70)
@@ -169,15 +139,11 @@ def demo_classical_attack():
 
 
 def estimate_rsa_crack_time():
-    """Summarize historical factoring results without guessing attack times."""
+   
     
     print("\n" + "=" * 70)
     print("CLASSICAL FACTORIZATION: QUALITATIVE STATUS")
     print("=" * 70)
-    
-    # Assumptions based on current technology
-    # Best known classical algorithm: General Number Field Sieve
-    # Complexity: exp((64/9)^(1/3) * (ln n)^(1/3) * (ln ln n)^(2/3))
     
     estimates = [
         ("RSA-512", 512, "Factored in 1999", "Historical result"),
@@ -208,8 +174,7 @@ def estimate_rsa_crack_time():
 
 
 def complexity_comparison():
-    """Compare classical vs quantum complexity."""
-    
+   
     print("\n" + "=" * 70)
     print("COMPLEXITY COMPARISON: CLASSICAL vs QUANTUM")
     print("=" * 70)
@@ -255,7 +220,7 @@ if __name__ == "__main__":
     print("  QUANTUM CRYPTO EDUCATION - Part 2: Classical Attack  ")
     print("=" * 70)
     
-    # Run demo
+    
     demo_classical_attack()
     estimate_rsa_crack_time()
     complexity_comparison()

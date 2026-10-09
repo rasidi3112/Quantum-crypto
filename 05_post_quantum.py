@@ -1,17 +1,9 @@
-"""
-POST-QUANTUM CRYPTOGRAPHY - AN INTRODUCTION
-Conceptual demonstrations of algorithms designed to resist known quantum attacks.
-The examples in this file are not implementations of NIST standards.
-"""
 
 import hashlib
 import secrets
 import os
 
-# ============= HASH-BASED SIGNATURES (SPHINCS+ concept) =============
-
 def hash_based_keypair(seed: bytes = None) -> tuple:
-    """Create toy values for a hash demonstration; this is not a key pair."""
     if seed is None:
         seed = secrets.token_bytes(32)
     
@@ -21,19 +13,15 @@ def hash_based_keypair(seed: bytes = None) -> tuple:
     return private_key, public_key
 
 def hash_based_sign(message: bytes, private_key: bytes) -> bytes:
-    """Return a toy digest; this is not a digital signature."""
     public_key = hashlib.sha256(private_key).digest()
     return hashlib.sha256(public_key + message).digest()
 
 def hash_based_verify(message: bytes, signature: bytes, public_key: bytes) -> bool:
-    """Check a toy digest; anyone can forge it, so it is not a signature."""
     expected = hashlib.sha256(public_key + message).digest()
     return secrets.compare_digest(signature, expected)
 
-# ============= SYMMETRIC ENCRYPTION (AES-256 concept) =============
 
 def aes256_demo():
-    """Explain the idealized Grover search effect on AES-256."""
     print("\n" + "=" * 60)
     print("AES-256: SYMMETRIC SEARCH UNDER QUANTUM ALGORITHMS")
     print("=" * 60)
@@ -52,10 +40,7 @@ def aes256_demo():
     • Combine with post-quantum key exchange
     """)
 
-# ============= LATTICE-BASED CRYPTO (Kyber concept) =============
-
 def lattice_demo():
-    """Demonstrate lattice-based cryptography concepts."""
     print("\n" + "=" * 60)
     print("ML-KEM (BASED ON CRYSTALS-KYBER): KEY ENCAPSULATION")
     print("=" * 60)
@@ -71,7 +56,6 @@ def lattice_demo():
     current NIST standard and an appropriate maintained cryptographic provider.
     """)
 
-# ============= MAIN DEMO =============
 
 if __name__ == "__main__":
     print("=" * 60)
@@ -101,7 +85,6 @@ if __name__ == "__main__":
     aes256_demo()
     lattice_demo()
     
-    # Demo hash-based signing
     print("\n" + "=" * 60)
     print("TOY HASH CHECK DEMO (NOT A DIGITAL SIGNATURE)")
     print("=" * 60)

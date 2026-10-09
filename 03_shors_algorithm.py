@@ -1,30 +1,10 @@
-"""
-=============================================================================
-SHOR'S ALGORITHM - THE QUANTUM THREAT
-=============================================================================
-Educational demonstration of Shor's Algorithm concepts using Qiskit.
-
-IMPORTANT DISCLAIMER FOR RESEARCHERS:
-- The quantum circuit in this demo is SIMPLIFIED for educational purposes
-- It does NOT implement full controlled modular exponentiation
-- The "classical simulation" correctly demonstrates Shor's mathematical logic
-- Full Shor's implementation requires O(n³) gates for modular exponentiation
-- See: Gidney & Ekerå (2021) for realistic resource estimates
-
-Reference: Shor, P.W. (1994). "Algorithms for quantum computation: 
-           discrete logarithms and factoring" FOCS '94
-
-Author: Quantum Crypto Education
-=============================================================================
-"""
-
 import numpy as np
 from math import gcd, log2, ceil
 from typing import Optional, Tuple, List
 from fractions import Fraction
 import random
 
-# Try to import Qiskit
+
 try:
     from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister, transpile
     from qiskit_aer import AerSimulator
@@ -37,8 +17,7 @@ except ImportError:
 
 
 def explain_shors_algorithm():
-    """Explain how Shor's Algorithm works."""
-    
+   
     print("\n" + "=" * 70)
     print("HOW SHOR'S ALGORITHM WORKS")
     print("=" * 70)
@@ -101,10 +80,6 @@ def explain_shors_algorithm():
 
 
 def classical_period_finding(a: int, N: int, verbose: bool = True) -> int:
-    """
-    Find period r such that a^r ≡ 1 (mod N) using classical method.
-    This is O(r) - slow for large r.
-    """
     if verbose:
         print(f"\nClassical period finding for a={a}, N={N}")
     
@@ -114,7 +89,7 @@ def classical_period_finding(a: int, N: int, verbose: bool = True) -> int:
     while current != 1:
         current = (current * a) % N
         r += 1
-        if r > N:  # Safety limit
+        if r > N:  
             if verbose:
                 print(f"   Period not found (exceeded N)")
             return -1
@@ -127,24 +102,16 @@ def classical_period_finding(a: int, N: int, verbose: bool = True) -> int:
 
 
 def classical_shors_simulation(N: int, verbose: bool = True) -> Tuple[Optional[int], Optional[int]]:
-    """
-    Simulate Shor's algorithm classically (for educational purposes).
-    
-    Note: This uses classical period finding, not quantum!
-    Real quantum computers would do this exponentially faster.
-    """
     if verbose:
         print(f"\n" + "=" * 60)
         print(f"🔬 SIMULATING SHOR'S ALGORITHM for N = {N}")
         print("=" * 60)
-    
-    # Step 1: Trivial checks
+   
     if N % 2 == 0:
         if verbose:
             print(f"✓ N is even, trivial factor: 2")
         return 2, N // 2
     
-    # Step 2: Check if N is a prime power
     for b in range(2, int(log2(N)) + 1):
         a = int(round(N ** (1/b)))
         if a ** b == N:
@@ -152,25 +119,22 @@ def classical_shors_simulation(N: int, verbose: bool = True) -> Tuple[Optional[i
                 print(f"✓ N = {a}^{b}, factor: {a}")
             return a, N // a
     
-    # Step 3: Main loop
     max_attempts = 10
     for attempt in range(max_attempts):
         if verbose:
             print(f"\n--- Attempt {attempt + 1} ---")
         
-        # Pick random a
         a = random.randint(2, N - 1)
         if verbose:
             print(f"   Random a = {a}")
         
-        # Check gcd
         g = gcd(a, N)
         if g > 1:
             if verbose:
                 print(f"   Lucky! gcd({a}, {N}) = {g}")
             return g, N // g
         
-        # Find period (this is where quantum speedup would occur)
+    
         if verbose:
             print(f"   Finding period of f(x) = {a}^x mod {N}...")
         
@@ -184,23 +148,23 @@ def classical_shors_simulation(N: int, verbose: bool = True) -> Tuple[Optional[i
         if verbose:
             print(f"   Period r = {r}")
         
-        # Check if r is useful
+ 
         if r % 2 != 0:
             if verbose:
                 print(f"   r is odd, trying again...")
             continue
         
-        # Calculate a^(r/2)
+      
         x = pow(a, r // 2, N)
         if verbose:
             print(f"   a^(r/2) mod N = {a}^{r//2} mod {N} = {x}")
         
-        if x == N - 1:  # x ≡ -1 (mod N)
+        if x == N - 1:  
             if verbose:
                 print(f"   a^(r/2) ≡ -1 (mod N), trying again...")
             continue
         
-        # Success! Calculate factors
+       
         factor1 = gcd(x - 1, N)
         factor2 = gcd(x + 1, N)
         
@@ -208,7 +172,7 @@ def classical_shors_simulation(N: int, verbose: bool = True) -> Tuple[Optional[i
             print(f"   gcd({x} - 1, {N}) = gcd({x-1}, {N}) = {factor1}")
             print(f"   gcd({x} + 1, {N}) = gcd({x+1}, {N}) = {factor2}")
         
-        # Return non-trivial factors
+      
         if factor1 not in [1, N]:
             if verbose:
                 print(f"\n   [OK] SUCCESS! {N} = {factor1} × {N // factor1}")
@@ -224,42 +188,33 @@ def classical_shors_simulation(N: int, verbose: bool = True) -> Tuple[Optional[i
 
 
 def create_shors_circuit_demo(N: int, a: int, n_count: int = 4) -> 'QuantumCircuit':
-    """
-    Create a simplified Shor's algorithm circuit for demonstration.
-    
-    Note: This is a simplified version. Full Shor's requires
-    controlled modular exponentiation which is very complex.
-    """
     if not QISKIT_AVAILABLE:
         print("[!] Qiskit required for circuit creation")
         return None
     
-    # Create circuit
+
     qr_count = QuantumRegister(n_count, 'count')
     qr_aux = QuantumRegister(n_count, 'aux')
     cr = ClassicalRegister(n_count, 'meas')
     
     qc = QuantumCircuit(qr_count, qr_aux, cr)
     
-    # Initialize counting register with Hadamards
     for i in range(n_count):
         qc.h(qr_count[i])
     
-    # Initialize auxiliary register to |1⟩
+
     qc.x(qr_aux[0])
     
     qc.barrier()
-    
-    # Simplified controlled modular exponentiation
-    # In a real implementation, this would be much more complex
+   
     for i in range(n_count):
-        # Placeholder for controlled U^(2^i) where U|y⟩ = |ay mod N⟩
+    
         power = 2 ** i
         qc.cp(2 * np.pi * power / (2 ** n_count), qr_count[i], qr_aux[0])
     
     qc.barrier()
     
-    # Inverse QFT on counting register (manual implementation for compatibility)
+    
     for i in range(n_count // 2):
         qc.swap(qr_count[i], qr_count[n_count - i - 1])
     for i in range(n_count):
@@ -269,14 +224,14 @@ def create_shors_circuit_demo(N: int, a: int, n_count: int = 4) -> 'QuantumCircu
     
     qc.barrier()
     
-    # Measure
+  
     qc.measure(qr_count, cr)
     
     return qc
 
 
 def demo_quantum_period_finding():
-    """Demonstrate quantum period finding concept."""
+   
     
     if not QISKIT_AVAILABLE:
         print("\n[!] Install Qiskit for quantum circuit demo:")
@@ -287,28 +242,28 @@ def demo_quantum_period_finding():
     print("QUANTUM PERIOD FINDING DEMONSTRATION")
     print("=" * 60)
     
-    # Simple example: factor 15
+  
     N = 15
-    a = 7  # coprime to 15
+    a = 7 
     
     print(f"\nTarget: Factor N = {N}")
     print(f"Using base a = {a}")
     
-    # Show the function we're finding period of
+ 
     print(f"\nFunction f(x) = {a}^x mod {N}:")
     print("-" * 30)
     for x in range(10):
         fx = pow(a, x, N)
         print(f"  f({x}) = {a}^{x} mod {N} = {fx}")
     
-    # Create and run circuit
+ 
     n_count = 4
     qc = create_shors_circuit_demo(N, a, n_count)
     
     print(f"\nQuantum Circuit (simplified):")
     print(qc.draw(output='text'))
     
-    # Simulate
+
     simulator = AerSimulator()
     job = simulator.run(qc, shots=1000)
     result = job.result()
@@ -333,7 +288,7 @@ def demo_quantum_period_finding():
 
 
 def demo_full_factorization():
-    """Demo complete factorization using simulated Shor's."""
+   
     
     print("\n" + "=" * 70)
     print("FULL FACTORIZATION DEMO (Classical Simulation of Shor's)")
@@ -379,18 +334,18 @@ if __name__ == "__main__":
     print("  QUANTUM CRYPTO EDUCATION - Part 3: Shor's Algorithm  ")
     print("=" * 70)
     
-    # Explain the algorithm
+
     explain_shors_algorithm()
     
-    # Demo quantum circuit (if Qiskit available)
+   
     demo_quantum_period_finding()
     
-    # Demo full factorization
+  
     demo_full_factorization()
     
-    # Detailed example
+  
     print("\n" + "=" * 70)
-    print("📝 DETAILED EXAMPLE: Factoring 15")
+    print(" DETAILED EXAMPLE: Factoring 15")
     print("=" * 70)
     classical_shors_simulation(15, verbose=True)
     

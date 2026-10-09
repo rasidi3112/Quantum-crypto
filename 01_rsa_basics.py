@@ -1,17 +1,3 @@
-"""
-=============================================================================
-RSA ENCRYPTION BASICS
-=============================================================================
-Demonstration of how RSA encryption works - the encryption protecting
-today's internet communications.
-
-RSA (Rivest-Shamir-Adleman) is an asymmetric encryption whose security
-depends on the difficulty of factoring very large prime numbers.
-
-Author: Quantum Crypto Education
-=============================================================================
-"""
-
 import random
 from math import gcd
 from typing import Tuple
@@ -19,7 +5,6 @@ import time
 
 
 def is_prime(n: int) -> bool:
-    """Check if a number is prime using trial division."""
     if n < 2:
         return False
     if n == 2:
@@ -33,9 +18,9 @@ def is_prime(n: int) -> bool:
 
 
 def generate_prime(bits: int = 8) -> int:
-    """Generate a random prime number with approximately 'bits' bits."""
+   
     while True:
-        # Generate odd number in range
+        
         n = random.randint(2**(bits-1), 2**bits - 1)
         if n % 2 == 0:
             n += 1
@@ -44,7 +29,7 @@ def generate_prime(bits: int = 8) -> int:
 
 
 def mod_inverse(e: int, phi: int) -> int:
-    """Calculate modular multiplicative inverse using Extended Euclidean Algorithm."""
+  
     def extended_gcd(a: int, b: int) -> Tuple[int, int, int]:
         if a == 0:
             return b, 0, 1
@@ -58,18 +43,11 @@ def mod_inverse(e: int, phi: int) -> int:
 
 
 def generate_rsa_keys(bits: int = 8) -> Tuple[Tuple[int, int], Tuple[int, int], Tuple[int, int]]:
-    """
-    Generate RSA key pair.
     
-    Returns:
-        - public_key: (e, n)
-        - private_key: (d, n)
-        - primes: (p, q) - for demonstration, normally this is SECRET!
-    """
     print("\nGENERATING RSA KEYS...")
     print("=" * 50)
     
-    # Step 1: Generate two distinct prime numbers
+    
     p = generate_prime(bits)
     q = generate_prime(bits)
     while q == p:
@@ -78,23 +56,23 @@ def generate_rsa_keys(bits: int = 8) -> Tuple[Tuple[int, int], Tuple[int, int], 
     print(f"✓ Prime p = {p}")
     print(f"✓ Prime q = {q}")
     
-    # Step 2: Compute n = p * q
+    
     n = p * q
     print(f"✓ n = p × q = {n}")
     
-    # Step 3: Compute Euler's totient φ(n) = (p-1)(q-1)
+    
     phi = (p - 1) * (q - 1)
     print(f"✓ φ(n) = (p-1)(q-1) = {phi}")
     
-    # Step 4: Choose e such that 1 < e < φ(n) and gcd(e, φ(n)) = 1
-    e = 65537  # Common choice, but may be too large for small primes
+    
+    e = 65537  
     if e >= phi:
         e = 3
         while gcd(e, phi) != 1:
             e += 2
     print(f"✓ Public exponent e = {e}")
     
-    # Step 5: Compute d, the modular multiplicative inverse of e mod φ(n)
+    
     d = mod_inverse(e, phi)
     print(f"✓ Private exponent d = {d}")
     
@@ -107,43 +85,43 @@ def generate_rsa_keys(bits: int = 8) -> Tuple[Tuple[int, int], Tuple[int, int], 
 
 
 def encrypt(message: int, public_key: Tuple[int, int]) -> int:
-    """Encrypt a message using RSA public key."""
+   
     e, n = public_key
     if message >= n:
         raise ValueError(f"Message {message} is too large! Must be < {n}")
-    # Ciphertext = message^e mod n
+   
     ciphertext = pow(message, e, n)
     return ciphertext
 
 
 def decrypt(ciphertext: int, private_key: Tuple[int, int]) -> int:
-    """Decrypt a ciphertext using RSA private key."""
+    
     d, n = private_key
-    # Message = ciphertext^d mod n
+    
     message = pow(ciphertext, d, n)
     return message
 
 
 def text_to_numbers(text: str) -> list:
-    """Convert text to list of ASCII numbers."""
+  
     return [ord(char) for char in text]
 
 
 def numbers_to_text(numbers: list) -> str:
-    """Convert list of ASCII numbers back to text."""
+   
     return ''.join(chr(num) for num in numbers)
 
 
 def demo_rsa_encryption():
-    """Demonstrate RSA encryption and decryption."""
+   
     print("\n" + "=" * 60)
     print("RSA ENCRYPTION DEMONSTRATION")
     print("=" * 60)
     
-    # Generate keys (using small primes for demonstration)
+    
     public_key, private_key, primes = generate_rsa_keys(bits=10)
     
-    # Encrypt a simple message (number)
+    
     print("\n" + "-" * 50)
     print("ENCRYPTION TEST (Single Number)")
     print("-" * 50)
@@ -160,7 +138,7 @@ def demo_rsa_encryption():
     assert original_message == decrypted, "Decryption failed!"
     print("[OK] Encryption/Decryption successful!")
     
-    # Encrypt text message
+    
     print("\n" + "-" * 50)
     print("ENCRYPTION TEST (Text Message)")
     print("-" * 50)
@@ -190,7 +168,7 @@ def demo_rsa_encryption():
 
 
 def explain_rsa_security():
-    """Explain why RSA is secure (classically) and its vulnerability."""
+   
     print("\n" + "=" * 60)
     print("RSA SECURITY - WHY IS IT SECURE?")
     print("=" * 60)
@@ -223,7 +201,7 @@ if __name__ == "__main__":
     print("  QUANTUM CRYPTO EDUCATION - Part 1: RSA Basics  ")
     print("=" * 60)
     
-    # Run demonstrations
+    
     public_key, private_key, primes = demo_rsa_encryption()
     explain_rsa_security()
     

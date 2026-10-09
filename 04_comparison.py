@@ -1,6 +1,3 @@
-"""Compare the asymptotic complexity of classical and quantum factoring."""
-
-
 def main() -> None:
     print("CLASSICAL vs QUANTUM FACTORING (ASYMPTOTIC OVERVIEW)")
     print("=" * 70)

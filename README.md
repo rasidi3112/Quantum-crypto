@@ -6,7 +6,7 @@ A comprehensive educational project demonstrating the theoretical foundations of
  
 ---
  
-## ⚠️ Important Educational Disclaimer
+##  Important Educational Disclaimer
 
 **This project is intended solely for educational and conceptual learning purposes.**
 
@@ -40,7 +40,7 @@ For production systems, use an actively maintained cryptographic provider that i
 
 ---
 
-## 📚 What You'll Learn
+##  What You'll Learn
 
 1. **RSA Fundamentals** — The mathematical structure securing much of today's internet
 2. **Classical Security of RSA** — Why integer factorization is believed to be computationally hard for classical computers
@@ -82,7 +82,7 @@ Quantum-crypto/
 
 ---
 
-## 📓 Jupyter Notebooks (Recommended Learning Path)
+##  Jupyter Notebooks (Recommended Learning Path)
 
 For the best learning experience, we recommend using the **interactive Jupyter Notebooks** which combine:
 - **LaTeX-rendered mathematical equations** for rigorous theory

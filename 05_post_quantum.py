@@ -78,7 +78,7 @@ if __name__ == "__main__":
 
     Additional algorithms selected for standardization:
     • FN-DSA (based on Falcon), intended for FIPS 206 — in development
-    • HQC, intended for FIPS 207 — selected in 2025; in development
+    • HQC — selected in 2025; standard not yet published
     
     """)
     
